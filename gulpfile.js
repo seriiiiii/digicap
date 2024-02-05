@@ -1,39 +1,68 @@
-// Initialize modules
-const { src, dest, watch, series, parallel } = require('gulp');
-const purgecss = require('gulp-purgecss'); // gulp-purgecss를 불러옵니다.
-const browserSync = require('browser-sync').create();
-const fileinclude = require('gulp-file-include');
+const { src, dest, watch, series, parallel } = require("gulp");
+const purgecss = require("gulp-purgecss"); // gulp-purgecss 모듈을 가져옴
+const browserSync = require("browser-sync").create();
+const fileinclude = require("gulp-file-include");
+const clean = require("gulp-clean");
+const tinify = require("gulp-tinify");
 
 // File paths
 const files = {
-  distPath: './dist',
-  stylePath: './styles/**/*',
-  htmlPath: './**/*.html',
-  includePath: './include/**/*.html',
-  jsDirPath: './js/**/*',
-  jsFilePath: './js/**/*.js'
+  distPath: "./dist",
+  stylePath: "./styles/**/*.css",
+  htmlPath: "./**/*.html",
+  includePath: "./include/**/*.html",
+  jsPath: "./js/**/*.js",
+  fontPath: "./styles/fonts/**/*",
+  imagePath: "./styles/images/**/*",
 };
+
+// Task to clean dist directory
+function cleanDist() {
+  return src(files.distPath + "/*", { read: false, allowEmpty: true }) // dist 폴더 안의 모든 파일을 대상으로 설정
+    .pipe(clean());
+}
 
 // Task to compile styles
 function stylesTask() {
-  return src(files.stylePath)
-    .pipe(dest(files.distPath + '/styles'));
+  return src(files.stylePath).pipe(dest(files.distPath + "/styles"));
 }
 
 // Task to compile JavaScript files
 function javascriptTask() {
-  return src(files.jsDirPath)
-    .pipe(dest(files.distPath + '/js'));
+  return src(files.jsPath).pipe(dest(files.distPath + "/js"));
 }
 
 // Task to include HTML files
 function fileincludeTask() {
-  return src([files.htmlPath, '!./include/*.html'])
-    .pipe(fileinclude({
-      prefix: '@@',
-      basepath: '@file'
-    }))
+  return src([files.htmlPath, "!./include/*.html"])
+    .pipe(
+      fileinclude({
+        prefix: "@@",
+        basepath: "@file",
+      })
+    )
     .pipe(dest(files.distPath));
+}
+
+// Task to remove unused CSS
+function purgeCssTask() {
+  return src(files.stylePath)
+    .pipe(
+      purgecss({
+        content: [files.htmlPath, files.includePath],
+      })
+    )
+    .pipe(dest(files.distPath + "/styles/css")); // CSS 파일을 dist/styles/css로 이동
+}
+
+// Task to copy font files
+function fontsTask() {
+  return src(files.fontPath).pipe(dest(files.distPath + "/styles/fonts"));
+}
+
+// Task to move image files to dist/styles/images directory
+function imagesTask() {
+  return src(files.imagePath).pipe(dest(files.distPath + "/styles/images"));
 }
 
 // Task to synchronize browser with changes and reload
@@ -41,31 +70,26 @@ function browserSyncTask() {
   var options = {
     server: {
       baseDir: files.distPath,
-      directory: true
     },
-    open: 'external'
+    open: "external",
   };
   browserSync.init(options);
-  watch(files.htmlPath).on('change', browserSync.reload);
-  watch(files.includePath).on('change', browserSync.reload);
-  watch(files.jsFilePath).on('change', browserSync.reload);
-  watch(files.stylePath).on('change', purgeCssTask); // CSS 파일 변경 감지 시 purgeCssTask 실행
 }
 
-// Task to remove unused CSS
-function purgeCssTask() {
-  return src(files.stylePath) // CSS 파일 대상으로 설정
-    .pipe(purgecss({
-      content: [files.htmlPath, files.includePath] // HTML 파일 경로 제공
-    }))
-    .pipe(dest(files.distPath + '/css')); // CSS 파일을 dist/css 디렉토리에 저장
+// Watch task
+function watchTask() {
+  watch(files.htmlPath, series(fileincludeTask, browserSync.reload));
+  watch(files.includePath, series(fileincludeTask, browserSync.reload));
+  watch(files.jsPath, series(javascriptTask, browserSync.reload));
+  watch(files.stylePath, series(stylesTask, purgeCssTask, browserSync.reload));
+  watch(files.fontPath, series(fontsTask, browserSync.reload));
+  watch(files.imagePath, series(imagesTask, browserSync.reload));
 }
-
-// Export the purgeCssTask
-exports.purgecss = purgeCssTask;
 
 // Default task
 exports.default = series(
-  parallel(stylesTask, javascriptTask, fileincludeTask),
-  series(browserSyncTask, purgeCssTask)
+  cleanDist,
+  parallel(stylesTask, javascriptTask, fileincludeTask, fontsTask, imagesTask), // imagesTask 추가
+  series(purgeCssTask, browserSyncTask),
+  watchTask // 추가된 watchTask 호출
 );

@@ -14,20 +14,6 @@
     font-family: "Flaticon";
     src: url("./Flaticon.svg#Flaticon") format("svg"); } }
 
-.fi:before {
-  display: inline-block;
-  font-family: "Flaticon";
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  line-height: 1;
-  text-decoration: inherit;
-  text-rendering: optimizeLegibility;
-  text-transform: none;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  font-smoothing: antialiased; }
-
 .flaticon-mexican-taco:before {
   content: "\f100"; }
 

@@ -60,17 +60,11 @@ input:focus {
 .talign-right {
   text-align: right;
 }
-.talign-center {
-  text-align: center;
-}
 .bgc1 {
   background: #f1f1f1;
 }
 .fgc1 {
   color: #999;
-}
-.fgc0 {
-  color: #000;
 }
 p {
   margin-top: 1em;
@@ -83,13 +77,10 @@ p {
 .mtn {
   margin-top: 0;
 }
-.mtl, .mal {
-  margin-top: 1.5em;
-}
-.mbl, .mal {
+.mbl {
   margin-bottom: 1.5em;
 }
-.mal, .mhl {
+ .mhl {
   margin-left: 1.5em;
   margin-right: 1.5em;
 }
@@ -106,7 +97,7 @@ p {
 .pbs, .pvs {
   padding-bottom: .25em;
 }
-.pvs, .pts {
+.pvs {
   padding-top: .25em;
 }
 .unit {
