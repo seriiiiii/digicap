@@ -257,8 +257,8 @@ font-family: 'Poppins', sans-serif;
   box-shadow: 4px 0 5px -5px rgba(0, 0, 0, 0.2);
 }
 .sticky-wrapper .shrink {
-  padding-top: 30px !important;
-  padding-bottom: 30px !important;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 .site-navbar {
   margin-bottom: 0px;
