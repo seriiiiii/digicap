@@ -591,6 +591,11 @@ pre code {
     overflow-y: hidden;
     margin-bottom: 20px;
   }
+  #services-section .col-lg-5{
+    -ms-flex: 0 0 40%;
+    flex: 0 0 40%;
+    max-width: 40%;
+  }
   .col-lg-5 {
     -webkit-box-flex: 0;
     -ms-flex: 0 0 30%;
