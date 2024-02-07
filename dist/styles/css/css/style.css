@@ -116,6 +116,8 @@ font-family: 'Poppins', sans-serif;
 
 .site-section {
   padding: 2.5em 0;
+  max-width: 1140px;
+    margin: 0 auto;
 }
 @media (min-width: 768px) {
   .site-section {
@@ -564,7 +566,7 @@ font-family: 'Poppins', sans-serif;
   position: relative;
   display: block;
   overflow: hidden;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; */
   height: 200px;
 }
 .media-1:after {
